@@ -1,2 +1,7 @@
 node_modules/
+skills/
+
 .env
+
+AGENTS.md
+JOURNAL.md
