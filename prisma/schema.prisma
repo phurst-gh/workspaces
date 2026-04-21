@@ -32,8 +32,7 @@ model User {
   id          String   @id @default(uuid())
   email        String   @unique
   passwordHash String
-  role      Role  @default(USER)
-  isActive     Boolean  @default(true)
+role      Role  @default(USER)
   maxWorkspaces Int @default(10)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt

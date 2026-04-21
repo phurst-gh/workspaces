@@ -11,6 +11,11 @@ type Workspace = {
   message?: string;
 };
 
+type PaginationParams = {
+  page?: number;
+  limit?: number;
+};
+
 type WorkspaceMember = {
   id: string;
   userId: string;
@@ -18,10 +23,18 @@ type WorkspaceMember = {
   role: string;
 };
 
+type PaginationResult<T> = {
+  data: T[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+};
+
 type WorkspaceService = {
   createWorkspace(name: string, isPublic: boolean, userId: string): Promise<Workspace>;
-  getUserWorkspaces(userId: string): Promise<Workspace[]>;
-  getWorkspaceMembers(workspaceId: string): Promise<WorkspaceMember[]>;
+  getUserWorkspaces(userId: string, params?: PaginationParams): Promise<PaginationResult<Workspace>>;
+  getWorkspaceMembers(workspaceId: string, params?: PaginationParams): Promise<PaginationResult<WorkspaceMember>>;
 };
 
 const createWorkspace = async (name: string, isPublic: boolean, userId: string) => {
@@ -66,14 +79,42 @@ const createWorkspace = async (name: string, isPublic: boolean, userId: string) 
   };
 };
 
-const getUserWorkspaces = async (userId: string) => {
-  const userWorkspaces = await workspaceRepository.findAllByUser(userId);
-  return userWorkspaces;
+const getUserWorkspaces = async (userId: string, params?: PaginationParams) => {
+  const page = params?.page ?? 1;
+  const limit = params?.limit ?? 10;
+  const skip = (page - 1) * limit;
+
+  const [userWorkspaces, total] = await Promise.all([
+    workspaceRepository.findAllByUser(userId, { skip, take: limit }),
+    workspaceRepository.countByUser(userId),
+  ]);
+
+  return {
+    data: userWorkspaces,
+    total,
+    page,
+    limit,
+    totalPages: Math.ceil(total / limit),
+  };
 };
 
-const getWorkspaceMembers = async (workspaceId: string) => {
-  const members = await workspaceRepository.findMembersByWorkspace(workspaceId);
-  return members;
+const getWorkspaceMembers = async (workspaceId: string, params?: PaginationParams) => {
+  const page = params?.page ?? 1;
+  const limit = params?.limit ?? 10;
+  const skip = (page - 1) * limit;
+
+  const [members, total] = await Promise.all([
+    workspaceRepository.findMembersByWorkspace(workspaceId, { skip, take: limit }),
+    workspaceRepository.countMembersByWorkspace(workspaceId),
+  ]);
+
+  return {
+    data: members,
+    total,
+    page,
+    limit,
+    totalPages: Math.ceil(total / limit),
+  };
 };
 
 export const workspaceService: WorkspaceService = {

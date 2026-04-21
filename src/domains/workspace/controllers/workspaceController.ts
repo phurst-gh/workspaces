@@ -21,10 +21,14 @@ const createWorkspace = async (req: Request, res: Response) => {
 
 // const getWorkspace = async (req: Request, res: Response) => {};
 
+const MAX_LIMIT = 50;
+
 const listUserMemberships = async (req: Request, res: Response) => {
   const { sub: userId } = requireUser(req);
+  const page = Number(req.query.page) || 1;
+  const limit = Math.min(Number(req.query.limit) || 10, MAX_LIMIT);
 
-  const workspaces = await workspaceService.getUserWorkspaces(userId);
+  const workspaces = await workspaceService.getUserWorkspaces(userId, { page, limit });
 
   res.status(200).json({
     status: "success",
@@ -34,8 +38,10 @@ const listUserMemberships = async (req: Request, res: Response) => {
 
 const listWorkspaceMembers = async (req: Request, res: Response) => {
   const workspaceId: string = req.params.workspaceId;
+  const page = Number(req.query.page) || 1;
+  const limit = Math.min(Number(req.query.limit) || 10, MAX_LIMIT);
 
-  const members = await workspaceService.getWorkspaceMembers(workspaceId);
+  const members = await workspaceService.getWorkspaceMembers(workspaceId, { page, limit });
 
   res.status(200).json({
     status: "success",

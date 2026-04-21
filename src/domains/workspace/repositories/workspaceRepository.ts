@@ -32,7 +32,7 @@ const workspaceRepository = {
       },
     }),
 
-  findAllByUser: async (userId: string) =>
+  findAllByUser: async (userId: string, pagination?: { skip?: number; take?: number }) =>
     await prisma.workspace.findMany({
       where: {
         members: {
@@ -46,6 +46,19 @@ const workspaceRepository = {
         name: true,
         isPublic: true,
         createdAt: true,
+      },
+      skip: pagination?.skip,
+      take: pagination?.take,
+    }),
+
+  countByUser: async (userId: string) =>
+    await prisma.workspace.count({
+      where: {
+        members: {
+          some: {
+            userId,
+          },
+        },
       },
     }),
 
@@ -84,7 +97,7 @@ const workspaceRepository = {
       },
     }),
 
-  findMembersByWorkspace: async (workspaceId: string) =>
+  findMembersByWorkspace: async (workspaceId: string, pagination?: { skip?: number; take?: number }) =>
     await prisma.workspaceMember.findMany({
       where: {
         workspaceId,
@@ -97,6 +110,15 @@ const workspaceRepository = {
             role: true,
           },
         },
+      },
+      skip: pagination?.skip,
+      take: pagination?.take,
+    }),
+
+  countMembersByWorkspace: async (workspaceId: string) =>
+    await prisma.workspaceMember.count({
+      where: {
+        workspaceId,
       },
     }),
 

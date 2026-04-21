@@ -66,7 +66,7 @@ const login = async (UserCredentials: UserCredentials): Promise<AuthResult> => {
 
   // 5. Return result
   return {
-    message: "Login successfull",
+    message: "Login successfully",
     accessToken,
     refreshToken: newRefreshToken,
     user: {
