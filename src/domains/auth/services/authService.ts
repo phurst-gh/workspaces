@@ -138,7 +138,7 @@ const refreshToken = async (token: string): Promise<RefreshResult> => {
       accessToken,
       refreshToken: newRefreshToken,
     };
-  } catch (error) {
+  } catch (_) {
     throw new AppError(401, ErrorCode.INVALID_REFRESH_TOKEN, "Refresh token is invalid or expired");
   }
 };
