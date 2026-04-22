@@ -11,7 +11,7 @@
     "noImplicitThis": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "moduleResolution": "Node",
+    "moduleResolution": "bundler",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
@@ -23,6 +23,7 @@
     "rootDir": "./",
     "resolveJsonModule": true,
     "allowImportingTsExtensions": false,
+    "types": ["node", "jest"],
     "baseUrl": "./",
     "paths": {
       "@/env": ["env.ts"],
